@@ -1,0 +1,21 @@
+.btnAttend{
+    background-color: green;
+    border: 0px;
+    padding: 10px; 
+}
+
+.header{
+    font-size: large  !important;
+}
+
+.quiz{
+
+}
+
+.description{
+    font-size: medium !important;
+}
+
+.quizDetail{
+    margin-bottom:2%;
+}

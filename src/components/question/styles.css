@@ -1,0 +1,51 @@
+.question {
+  font-weight: bold;
+}
+
+/* The container for each Radio Button*/
+.propContainer {
+  position: relative;
+  user-select: none;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.radioContainer {
+  border: 2px solid silver;
+  padding: 10px;
+  text-align: center;
+  border-radius: 30px;
+}
+
+.checkContainer {
+  border: 2px solid silver;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Hide the browser's default radio button */
+.propContainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  border: 1px solid silver;
+}
+
+.checkContainer:hover, .radioContainer:hover {
+  background-color: #eeeeee;
+}
+
+.propContainer > input:checked {
+  border: 1px solid blue;
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.submitBtn {
+  border-radius: 30px !important;
+}
