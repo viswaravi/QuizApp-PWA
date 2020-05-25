@@ -18,4 +18,14 @@
 
 .quizDetail{
     margin-bottom:2%;
+    color: #748A9D !important;
+}
+.content{
+   border-color: #FF9665 !important;
+   background-color: #F0F4F8 !important; 
+   
+}
+.ui.medium.primary.button{
+background-color: #FF9665 !important;
+border-radius: 50px  !important;
 }

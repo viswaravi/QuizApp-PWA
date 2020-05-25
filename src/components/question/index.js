@@ -121,73 +121,73 @@ const Questions = (props) => {
                 )}
               </div>
             ) : (
-              // Check Box
-              <div>
-                {props.questions[questionIndex].answers.map(
-                  (answer, aindex) => {
-                    return (
-                      <div>
-                        <label
-                          className="propContainer checkContainer"
-                          style={
-                            isSelected(answer["id"])
-                              ? { borderColor: "#0288d1", backgroundColor:'#eeeeee !important' }
-                              : null
-                          }
-                          key={answer["answer_text"]}
-                        >
-                          {answer["answer_text"]}
-                          <input
-                            type="checkbox"
-                            value={answer["answer_text"]}
-                            name={
-                              props.questions[questionIndex]["question_text"]
+                // Check Box
+                <div>
+                  {props.questions[questionIndex].answers.map(
+                    (answer, aindex) => {
+                      return (
+                        <div>
+                          <label
+                            className="propContainer checkContainer"
+                            style={
+                              isSelected(answer["id"])
+                                ? { borderColor: "#0288d1", backgroundColor: '#eeeeee !important' }
+                                : null
                             }
-                            onChange={() => {
-                              optionSelectHandler(
-                                props.questions[questionIndex].id,
-                                answer["id"],
-                                "MULTIPLECHOICE"
-                              );
-                            }}
-                          />
-                          <span className="customCheck"></span>
-                        </label>
-                      </div>
-                    );
-                  }
-                )}
-              </div>
-            )}
+                            key={answer["answer_text"]}
+                          >
+                            {answer["answer_text"]}
+                            <input
+                              type="checkbox"
+                              value={answer["answer_text"]}
+                              name={
+                                props.questions[questionIndex]["question_text"]
+                              }
+                              onChange={() => {
+                                optionSelectHandler(
+                                  props.questions[questionIndex].id,
+                                  answer["id"],
+                                  "MULTIPLECHOICE"
+                                );
+                              }}
+                            />
+                            <span className="customCheck"></span>
+                          </label>
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+              )}
           </div>
           <div className="btnContainer">
-            <button
-              className="ui medium  button submitBtn"
-              onClick={prevQuestion}
-            >
-              Prev
-            </button>
+            <img
+              src={process.env.PUBLIC_URL + "/Image/prev.png"}
+              alt="Loading..."
+              width="6%"
+              height="10%"
+            />
             <button
               className="ui medium green button submitBtn"
-              onClick={() => {}}
+              onClick={() => { }}
             >
-              Submit
+              Finish Quiz
             </button>
-            <button
-              className="ui medium  button submitBtn"
-              onClick={nextQuestion}
-            >
-              Next
-            </button>
+            <img
+              src={process.env.PUBLIC_URL + "/Image/next.png"}
+              alt="Loading..."
+              width="6%"
+              height="10%"
+            />
           </div>
         </div>
       ) : (
-        <div class="ui active transition visible inverted dimmer">
-          <div class="content">
-            <div class="ui inverted text loader">Loading</div>
+          <div class="ui active transition visible inverted dimmer">
+            <div class="content">
+              <div class="ui inverted text loader">Loading</div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

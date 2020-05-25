@@ -49,3 +49,7 @@
 .submitBtn {
   border-radius: 30px !important;
 }
+.ui.medium.green.button.submitBtn{
+
+  background-color: #FF9665;
+}

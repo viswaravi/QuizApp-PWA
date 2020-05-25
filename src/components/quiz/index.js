@@ -8,7 +8,7 @@ const Quiz = (props) => {
     {
       id: 1,
       name: "Sports Quiz",
-      description: "Quiz",
+      description: "Sports related",
       domain_name: "Sports",
       no_of_questions: 10,
       no_of_answers_to_display: 5,
@@ -18,8 +18,8 @@ const Quiz = (props) => {
     },
     {
       id: 1,
-      name: "Sports Quiz",
-      description: "Quiz",
+      name: "Science Quiz",
+      description: "Science related",
       domain_name: "Sports",
       no_of_questions: 10,
       no_of_answers_to_display: 5,
@@ -53,17 +53,14 @@ const Quiz = (props) => {
                   <div className="description">
                     <div className="quizDetail">{quizData.description}</div>
                     <div className="quizDetail">
-                      <span style={{ fontWeight: "bold" }}>
+                      <span className="quizDetail" style={{ fontWeight: "bold" }}>
                         {quizData.no_of_questions}
                       </span>{" "}
                       Questions
                     </div>
                     <div className="quizDetail">
-                      <i
-                        aria-hidden="true"
-                        class="clock larger disabled icon"
-                      ></i>
-                      <span>{quizData.time}</span>
+                      <span className="quizDetail">{quizData.time}</span>{" "}
+                      Mins
                     </div>
                   </div>
                 </div>
@@ -75,15 +72,15 @@ const Quiz = (props) => {
                       props.history.push("/questions");
                     }}
                   >
-                    Attend
+                    Start Quiz
                   </button>
                 </div>
               </div>
             );
           })
         ) : (
-          <div>No Quiz to Show</div>
-        )}
+            <div>No Quiz to Show</div>
+          )}
       </div>
     </div>
   );
