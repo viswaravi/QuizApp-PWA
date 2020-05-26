@@ -4,11 +4,18 @@ export const LOAD_QUIZ = "LOAD_QUIZ";
 
 export const LOAD_QUESTIONS = "LOAD_QUESTIONS";
 
+export const STORE_USER_ID = "STORE_USER_ID";
+
 //Action Where the Business Logic is Present
-export const loadQuiz = () => (dispatch) => {
+
+export const storeUser = (uid) => (dispatch) => {
+  dispatch({ type: STORE_USER_ID, payload: uid });
+};
+
+export const loadQuiz = (uid) => (dispatch, getState) => {
   axiosInstance({
     method: "get",
-    url: `quiz`,
+    url: `quiz/` + getState().data.userID,
     timeout: 5000,
   })
     .then((response) => {
@@ -23,17 +30,20 @@ export const loadQuiz = () => (dispatch) => {
     });
 };
 
-export const loadQuestions = (qid) => (dispatch) => {
+export const loadQuestions = (qid) => (dispatch, getState) => {
   console.log("Question ID :", qid);
   axiosInstance({
     method: "get",
-    url: `questions/` + qid,
+    url: `questions/` + getState().data.userID + "/" + qid,
     timeout: 5000,
   })
     .then((response) => {
       console.log("QUESTIONS FETCH SUCCESS :", response.data.question);
 
-      dispatch({ type: LOAD_QUESTIONS, payload: response.data.question });
+      dispatch({
+        type: LOAD_QUESTIONS,
+        payload: { questions: response.data.question, quizID: qid },
+      });
     })
     .catch((error) => {
       console.log("QUESTION FETCH FAIL :", error);

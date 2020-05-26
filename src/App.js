@@ -16,10 +16,10 @@ const App = () => {
     <Provider store={Store}>
       <div id="App">
         <Switch>
+          <Route exact path="/quiz" component={Quiz} />
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
           <Route path="/questions" component={Questions} />
-          <Route path="/quiz" component={Quiz} />
           <Route path="/" component={Welcome} />
         </Switch>
       </div>

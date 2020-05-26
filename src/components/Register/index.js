@@ -13,6 +13,7 @@ function Register() {
   const [dept, setDept] = useState(null);
   const [section, setSection] = useState(null);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isUniqueUser, setUniqueUser] = useState(true);
 
   const [deptOptions, setdeptOptions] = useState([]);
   const [sectOptions, setSectOptions] = useState([]);
@@ -107,6 +108,32 @@ function Register() {
       });
   };
 
+  const checkUniqueUser = () => {
+    if (roll != null) {
+      axiosInstance({
+        method: "post",
+        url: `user/unique`,
+        timeout: 5000,
+        data: {
+          roll_no: roll,
+        },
+      })
+        .then((response) => {
+          console.log("Unique User Check:", response.data);
+
+          if (response.data.unique == false) {
+            setUniqueUser(false);
+          } else {
+            // Try Later
+            setUniqueUser(true);
+          }
+        })
+        .catch((error) => {
+          console.log("Unique user Check FAIL :", error);
+        });
+    }
+  };
+
   return (
     <div id="registerContainer">
       <form>
@@ -139,10 +166,17 @@ function Register() {
         </div>
         <div className="formElt">
           <input
+            className={`${isUniqueUser ? "" : "formEltInValid"}`}
             type="text"
             placeholder="Roll number"
-            onChange={(e) => setRoll(e.target.value)}
+            onChange={(e) => {
+              setRoll(e.target.value);
+            }}
+            onBlur={checkUniqueUser}
           />
+          {!isUniqueUser ? (
+            <p className="validationText">Username already present</p>
+          ) : null}
         </div>
 
         <div className="formElt">
