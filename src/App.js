@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import logo from "./logo.svg";
 import { Provider } from "react-redux";
 import "./App.css";
@@ -10,12 +10,14 @@ import Questions from "./components/question/index";
 import Login from "./components/Login/index";
 import Register from "./components/Register/index";
 import Welcome from "./components/welcome";
+import LeaderBoard from "./components/LeaderBoard/LeaderBoard";
 
 const App = () => {
   return (
     <Provider store={Store}>
       <div id="App">
         <Switch>
+          <Route path="/leaderboard" component={LeaderBoard} />
           <Route path="/register" component={Register} />
           <Route path="/login" component={Login} />
           <Route path="/questions" component={Questions} />
