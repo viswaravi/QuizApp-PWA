@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import Slider from "react-animated-slider";
 import "./styles.css";
 import "react-animated-slider/build/horizontal.css";
+import axiosInstance from "../../api";
 
 const Questions = (props) => {
   const [questionIndex, setquestionIndex] = useState(0);
@@ -13,10 +14,6 @@ const Questions = (props) => {
       console.log(props.questions);
     }
   }, [props.questions]);
-
-  useEffect(() => {
-    console.log("ReRendering");
-  });
 
   const nextQuestion = () => {
     if (questionIndex < props.questions.length - 1) {
@@ -35,7 +32,8 @@ const Questions = (props) => {
     if (qtype == "SINGLECHOICE") {
       setAnswerDetails([
         {
-          user_id: 0,
+          user_id: props.userID,
+          quiz_id: props.quizID,
           question_id: qid,
           answer_id: aid,
         },
@@ -53,7 +51,8 @@ const Questions = (props) => {
         //   console.log("Removed");
       } else {
         details.push({
-          user_id: 0,
+          user_id: props.userID,
+          quiz_id: props.quizID,
           question_id: qid,
           answer_id: aid,
         });
@@ -78,8 +77,28 @@ const Questions = (props) => {
     return presence;
   };
 
+  const submitQuestion = () => {
+    if (answerDetails.length > 0) {
+      console.log(answerDetails);
+      axiosInstance({
+        method: "post",
+        url: `answer`,
+        timeout: 5000,
+        data: {
+          answer: answerDetails,
+        },
+      })
+        .then((response) => {
+          console.log("Question Submitted:", response.data);
+        })
+        .catch((error) => {
+          console.log("Question Submit Fail :", error);
+        });
+    }
+  };
+
   return (
-    <div>
+    <div id="questionContainer">
       {props.questions.length > 0 ? (
         <div key={questionIndex}>
           <div className="question">
@@ -121,79 +140,86 @@ const Questions = (props) => {
                 )}
               </div>
             ) : (
-                // Check Box
-                <div>
-                  {props.questions[questionIndex].answers.map(
-                    (answer, aindex) => {
-                      return (
-                        <div>
-                          <label
-                            className="propContainer checkContainer"
-                            style={
-                              isSelected(answer["id"])
-                                ? { borderColor: "#0288d1", backgroundColor: '#eeeeee !important' }
-                                : null
+              // Check Box
+              <div>
+                {props.questions[questionIndex].answers.map(
+                  (answer, aindex) => {
+                    return (
+                      <div>
+                        <label
+                          className="propContainer checkContainer"
+                          style={
+                            isSelected(answer["id"])
+                              ? {
+                                  borderColor: "#0288d1",
+                                  backgroundColor: "#eeeeee !important",
+                                }
+                              : null
+                          }
+                          key={answer["answer_text"]}
+                        >
+                          {answer["answer_text"]}
+                          <input
+                            type="checkbox"
+                            value={answer["answer_text"]}
+                            name={
+                              props.questions[questionIndex]["question_text"]
                             }
-                            key={answer["answer_text"]}
-                          >
-                            {answer["answer_text"]}
-                            <input
-                              type="checkbox"
-                              value={answer["answer_text"]}
-                              name={
-                                props.questions[questionIndex]["question_text"]
-                              }
-                              onChange={() => {
-                                optionSelectHandler(
-                                  props.questions[questionIndex].id,
-                                  answer["id"],
-                                  "MULTIPLECHOICE"
-                                );
-                              }}
-                            />
-                            <span className="customCheck"></span>
-                          </label>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-              )}
+                            onChange={() => {
+                              optionSelectHandler(
+                                props.questions[questionIndex].id,
+                                answer["id"],
+                                "MULTIPLECHOICE"
+                              );
+                            }}
+                          />
+                          <span className="customCheck"></span>
+                        </label>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            )}
           </div>
           <div className="btnContainer">
             <img
-              src={process.env.PUBLIC_URL + "/Image/prev.png"}
+              src={require("../../assets/images/back.png")}
               alt="Loading..."
               width="6%"
               height="10%"
+              onClick={prevQuestion}
             />
             <button
               className="ui medium green button submitBtn"
-              onClick={() => { }}
+              onClick={submitQuestion}
             >
-              Finish Quiz
+              Submit
             </button>
             <img
-              src={process.env.PUBLIC_URL + "/Image/next.png"}
+              src={require("../../assets/images/next.png")}
               alt="Loading..."
               width="6%"
               height="10%"
+              onClick={nextQuestion}
             />
           </div>
         </div>
       ) : (
-          <div class="ui active transition visible inverted dimmer">
-            <div class="content">
-              <div class="ui inverted text loader">Loading</div>
-            </div>
+        <div class="ui active transition visible inverted dimmer">
+          <div class="content">
+            <div class="ui inverted text loader">Loading</div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
   questions: state.data.questions,
+  quizID: state.data.quizID,
+  userID: state.data.userID,
 });
 
 const mapDispatchToProps = (dispatch) => ({});

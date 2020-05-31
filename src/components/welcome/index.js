@@ -35,7 +35,7 @@ const Welcome = (props) => {
               props.history.push("/login");
             }}
           >
-            Log in
+            <b> Log in</b>
           </a>
         </div>
       </div>

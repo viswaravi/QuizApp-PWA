@@ -4,7 +4,10 @@ import { loadQuiz, loadQuestions } from "../../store/actions/data.action";
 import "./styles.css";
 
 const Quiz = (props) => {
-  const [Quiz, setQuiz] = useState([
+  const [Quiz, setQuiz] = useState([]);
+
+  /**
+   * [
     {
       id: 1,
       name: "Sports Quiz",
@@ -27,8 +30,8 @@ const Quiz = (props) => {
       time: 60,
       hardness: "ADVANCE",
     },
-  ]);
-
+  ]
+   */
   useEffect(() => {
     props.loadQuiz();
   }, []);
@@ -40,26 +43,34 @@ const Quiz = (props) => {
   }, [props.quiz]);
 
   return (
-    <div>
+    <div id="quizContainer">
       <h1>Select a Quiz to Attend</h1>
       <div className="ui cards">
         {props.quiz.length > 0 ? (
-          Quiz.map((quizData) => {
+          props.quiz.map((quizData) => {
             return (
-              <div className="ui card">
+              <div className="ui card" key={quizData.id}>
                 <div className="content">
                   <div className="header">{quizData.name}</div>
                   <div className="meta">{quizData.hardness}</div>
                   <div className="description">
                     <div className="quizDetail">{quizData.description}</div>
                     <div className="quizDetail">
-                      <span className="quizDetail" style={{ fontWeight: "bold" }}>
+                      <span
+                        className="quizDetail"
+                        style={{ fontWeight: "bold" }}
+                      >
                         {quizData.no_of_questions}
                       </span>{" "}
                       Questions
                     </div>
                     <div className="quizDetail">
-                      <span className="quizDetail">{quizData.time}</span>{" "}
+                      <span
+                        className="quizDetail"
+                        style={{ fontWeight: "bold" }}
+                      >
+                        {quizData.time}
+                      </span>{" "}
                       Mins
                     </div>
                   </div>
@@ -79,8 +90,8 @@ const Quiz = (props) => {
             );
           })
         ) : (
-            <div>No Quiz to Show</div>
-          )}
+          <div>No Quiz to Show</div>
+        )}
       </div>
     </div>
   );
@@ -88,6 +99,7 @@ const Quiz = (props) => {
 
 const mapStateToProps = (state) => ({
   quiz: state.data.quiz,
+  userID: state.data.userID,
 });
 
 const mapDispatchToProps = (dispatch) => ({

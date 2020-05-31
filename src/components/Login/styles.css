@@ -1,23 +1,24 @@
 #loginContainer {
-  width: 100wh;
   height: 100vh;
   margin: 0%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
   padding: 20px;
-  padding-top: 50px;
   overflow-y: scroll;
 }
 
-form {
-  width: 90%;
+#form {
+  width: 100%;
 }
 
 .heading {
   display: flex;
   justify-content: left;
+}
+
+.formElt {
+  width: 100%;
 }
 
 .formElt input {
@@ -37,5 +38,36 @@ form {
   margin-bottom: 10px;
   text-align: center;
   cursor: pointer;
+  color: white;
   user-select: none;
+  width: 100%;
+}
+
+.validationText {
+  color: #d50000;
+  font-size: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+/* For Large Screens */
+@media only screen and (min-width: 768px) {
+  #loginContainer {
+    margin: 0%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    padding-top: 50px;
+    overflow-y: auto;
+    margin: 0px;
+  }
+  #backBtn {
+    display: none;
+  }
+
+  #form {
+    width: 25%;
+  }
 }

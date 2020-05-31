@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import "./styles.css";
 import axiosInstance from "../../api";
+import { storeUser } from "../../store/actions/data.action";
+import { connect } from "react-redux";
 
-function Login() {
+function Login(props) {
   const [pass, setPass] = useState(null);
   const [roll, setRoll] = useState(null);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [valid, setValid] = useState(true);
 
   useEffect(() => {
     if (pass && roll) {
@@ -14,9 +17,11 @@ function Login() {
   }, [pass, roll]);
 
   const login = () => {
+    console.log(roll, pass);
+
     axiosInstance({
-      method: "get",
-      url: `user`,
+      method: "post",
+      url: `user/login`,
       timeout: 5000,
       data: {
         user: {
@@ -30,8 +35,11 @@ function Login() {
 
         if (response.data.password == true) {
           // Move to Quiz
+          props.storeUser(response.data.user_id);
+          props.history.replace("/quiz");
         } else {
           // Try Later
+          setValid(false);
         }
       })
       .catch((error) => {
@@ -41,14 +49,22 @@ function Login() {
 
   return (
     <div id="loginContainer">
-      <form>
-        <h4 className="heading">Login</h4>
-        <br />
+      <br />
+      <img
+        src={require("../../assets/images/back.png")}
+        width="20"
+        height="27"
+        id="backBtn"
+        style={{ float: "left", marginBottom: "30%" }}
+      />
+
+      <h4 className="heading">Login</h4>
+      <div id="form">
         <div className="formElt">
           <input
             type="text"
             placeholder="Roll number"
-           // onChange={(e) => setRoll(e.target.value)}
+            onChange={(e) => setRoll(e.target.value)}
           />
         </div>
         <div className="formElt">
@@ -59,11 +75,21 @@ function Login() {
           />
         </div>
         <br />
-        <div className="btnLogin" onClick={login} >
+        {!valid ? (
+          <p className="validationText">Enter a Valid Credential</p>
+        ) : null}
+        <div className="btnLogin" onClick={login}>
           Login
         </div>
-      </form>
+      </div>
     </div>
   );
 }
-export default Login;
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  storeUser: (data) => dispatch(storeUser(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -10,15 +10,12 @@
   user-select: none;
 }
 
-* {
-  color: white;
-}
-
 #clubHead {
   font-weight: 800;
   font-size: 23px;
   line-height: 1.2;
   text-align: left;
+  color: white;
 }
 
 #clubHead p {
@@ -27,6 +24,7 @@
 
 #appName {
   font-size: 67px;
+  color: white;
   font-weight: bold;
 }
 
@@ -37,6 +35,7 @@
 
 #welcome p {
   font-size: 25px;
+  color: white;
 }
 
 .btnOption {
@@ -48,7 +47,7 @@
 }
 
 .dm {
-  color: #FF7E64;
+  color: #ff7e64;
   background-color: white;
 }
 
@@ -59,14 +58,15 @@
   border: 1px solid white;
 }
 
-
-#login{
-    font-size: 12px;
-    text-align: center;
+#login {
+  font-size: 12px;
+  color: white;
+  text-align: center;
 }
 
-#login a{
-    text-decoration: underline;
-    color: white;
-    cursor: pointer;
+#login a {
+  text-decoration: underline;
+  color: white;
+  cursor: pointer;
+  font-size: larger;
 }
