@@ -11,6 +11,7 @@ import Register from "./components/Register/index";
 import Welcome from "./components/welcome";
 import Protected from "./components/protected-hoc";
 import Home from "./components/home/index";
+import LeaderBoard from "./components/LeaderBoard/LeaderBoard";
 
 const App = () => {
   return (

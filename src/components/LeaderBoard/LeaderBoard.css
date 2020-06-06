@@ -1,0 +1,38 @@
+.pageheading{
+    color: #FF9665;
+    font-size:135%;
+     margin-top: 2%;
+}
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+}
+
+.homeIcon{
+   
+    margin-left: 20%;
+}
+
+.fontColor{
+    color: black;
+}
+.ui.table{
+    width: 90% !important;
+    margin-left: 5%;
+}
+.ui.table thead th{
+    color: #FF9665 !important;
+}
+.ui.table:not(.unstackable) th:first-child {
+    font-weight: 700 !important;
+}
+.ui.table:not(.unstackable) td:first-child {
+    font-weight: 500 !important; 
+}
+.ui.table td.active, .ui.table tr.active {
+    background: #FF9665 !important;
+    color: black !important;
+    opacity: 0.5;
+}
