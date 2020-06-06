@@ -1,19 +1,80 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, Fragment } from "react";
 import { connect } from "react-redux";
 import Slider from "react-animated-slider";
 import "./styles.css";
 import "react-animated-slider/build/horizontal.css";
 import axiosInstance from "../../api";
+import { useHistory } from "react-router-dom";
+import { submitQuiz } from "../../store/actions/data.action";
 
 const Questions = (props) => {
+  let history = useHistory();
   const [questionIndex, setquestionIndex] = useState(0);
   const [answerDetails, setAnswerDetails] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [questionsToAnswer, setQuestionsToAnswer] = useState([]);
+
+  useEffect(() => {
+    return () => {
+      clearTimer();
+    };
+  }, []);
 
   useEffect(() => {
     if (props.questions.length > 0) {
       console.log(props.questions);
+
+      // Set Questions to Answer
+      let ids = [];
+      props.questions.map((question) => {
+        ids.push(question.id);
+      });
+      setQuestionsToAnswer(ids);
+
+      startTimer();
+      // Watch for BackAction and Clear Timer
+      history.listen((location) => {
+        if (location.pathname == "/home") {
+          console.log("Popped");
+          clearTimer();
+        }
+      });
     }
   }, [props.questions]);
+
+  const startTimer = () => {
+    const quizTotalTime = props.quizData.time * 60;
+    const time_per_question =
+      quizTotalTime / props.quizData.no_of_answers_to_display;
+    const no_questions_to_answer =
+      props.quizData.no_of_answers_to_display - props.answered_questions_count;
+
+    const time_to_answer = no_questions_to_answer * time_per_question;
+
+    /*console.log(
+      quizTotalTime,
+      time_per_question,
+      no_questions_to_answer,
+      time_to_answer
+    );
+    */
+    // Start the Timer
+    setTimeLeft(time_to_answer);
+  };
+
+  // TImer
+  useEffect(() => {
+    if (timeLeft > 0) {
+      setTimeout(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    }
+  }, [timeLeft]);
+
+  const clearTimer = () => {
+    // Stop Timer
+    setTimeLeft(0);
+  };
 
   const nextQuestion = () => {
     if (questionIndex < props.questions.length - 1) {
@@ -21,6 +82,7 @@ const Questions = (props) => {
       setquestionIndex(questionIndex + 1);
     }
   };
+
   const prevQuestion = () => {
     if (questionIndex > 0) {
       setAnswerDetails([]);
@@ -59,7 +121,6 @@ const Questions = (props) => {
         //   console.log("Added");
       }
       // console.log(details);
-
       setAnswerDetails([...details]);
     }
   };
@@ -90,6 +151,29 @@ const Questions = (props) => {
       })
         .then((response) => {
           console.log("Question Submitted:", response.data);
+
+          const qid = props.questions[questionIndex].id;
+
+          // Remove answered Quetions
+          let qids = questionsToAnswer;
+
+          console.log("QIDS :", qids);
+          if (qids.includes(qid)) {
+            qids.splice(qids.indexOf(qid), 1);
+          }
+
+          if (qids.length == 0) {
+            // Submit Quiz Finish
+
+            console.log("Current :", props);
+
+            props.submitQuiz({ uid: props.userID, qid: props.quizID });
+
+            history.replace("/feedback");
+          } else if (qids.length > 0) {
+            setQuestionsToAnswer(qids);
+            nextQuestion();
+          }
         })
         .catch((error) => {
           console.log("Question Submit Fail :", error);
@@ -99,6 +183,20 @@ const Questions = (props) => {
 
   return (
     <div id="questionContainer">
+      <div id="questionHeaderInfo">
+        <div>
+          {" "}
+          <h3 style={{ marginRight: 20 }}>Questions</h3>
+          <h1>{questionIndex + 1}</h1>
+          <h3>/{props.questions.length}</h3>
+        </div>
+        <div>
+          <h4 id="timer" className={timeLeft < 300 ? "dangerTime" : "safeTime"}>
+            {Math.round(timeLeft / 60) + "m   "}
+            {Math.round(timeLeft % 60) + "s"}
+          </h4>
+        </div>
+      </div>
       {props.questions.length > 0 ? (
         <div key={questionIndex}>
           <div className="question">
@@ -107,7 +205,7 @@ const Questions = (props) => {
           </div>
           <div className="answerContainer">
             {props.questions[questionIndex].question_type == "SINGLECHOICE" ? (
-              <div>
+              <Fragment>
                 {props.questions[questionIndex].answers.map(
                   (answer, aindex) => {
                     return (
@@ -115,7 +213,7 @@ const Questions = (props) => {
                         className="propContainer radioContainer"
                         style={
                           isSelected(answer["id"])
-                            ? { borderColor: "#0288d1" }
+                            ? { backgroundColor: "#FF9665", color: "white" }
                             : null
                         }
                         key={answer["answer_text"]}
@@ -138,10 +236,10 @@ const Questions = (props) => {
                     );
                   }
                 )}
-              </div>
+              </Fragment>
             ) : (
               // Check Box
-              <div>
+              <Fragment>
                 {props.questions[questionIndex].answers.map(
                   (answer, aindex) => {
                     return (
@@ -151,8 +249,8 @@ const Questions = (props) => {
                           style={
                             isSelected(answer["id"])
                               ? {
-                                  borderColor: "#0288d1",
-                                  backgroundColor: "#eeeeee !important",
+                                  backgroundColor: "#FF9665",
+                                  color: "white",
                                 }
                               : null
                           }
@@ -179,15 +277,15 @@ const Questions = (props) => {
                     );
                   }
                 )}
-              </div>
+              </Fragment>
             )}
           </div>
           <div className="btnContainer">
             <img
               src={require("../../assets/images/back.png")}
               alt="Loading..."
-              width="6%"
-              height="10%"
+              width="20px"
+              height="40px"
               onClick={prevQuestion}
             />
             <button
@@ -199,8 +297,8 @@ const Questions = (props) => {
             <img
               src={require("../../assets/images/next.png")}
               alt="Loading..."
-              width="6%"
-              height="10%"
+              width="20px"
+              height="40px"
               onClick={nextQuestion}
             />
           </div>
@@ -208,7 +306,10 @@ const Questions = (props) => {
       ) : (
         <div class="ui active transition visible inverted dimmer">
           <div class="content">
-            <div class="ui inverted text loader">Loading</div>
+            <div class="ui inverted text loader">
+              {" "}
+              No Questions to show Go back
+            </div>
           </div>
         </div>
       )}
@@ -220,8 +321,12 @@ const mapStateToProps = (state) => ({
   questions: state.data.questions,
   quizID: state.data.quizID,
   userID: state.data.userID,
+  quizData: state.data.quizData,
+  answered_questions_count: state.data.answered_questions_count,
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  submitQuiz: (data) => dispatch(submitQuiz(data)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Questions);

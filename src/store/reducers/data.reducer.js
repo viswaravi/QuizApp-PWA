@@ -2,6 +2,8 @@ import {
   LOAD_QUIZ,
   LOAD_QUESTIONS,
   STORE_USER_ID,
+  DELETE_USER_ID,
+  STORE_CURRENT_QUIZ,
 } from "../actions/data.action";
 
 const initialState = {
@@ -10,8 +12,12 @@ const initialState = {
 
   // QUIZ DATA
   quiz: [],
-  quizID: null,
   questions: [],
+
+  // Current Data
+  quizID: null,
+  quizData: {},
+  answered_questions_count: 0,
 };
 
 export default function dataReducer(state = initialState, action) {
@@ -20,6 +26,11 @@ export default function dataReducer(state = initialState, action) {
       return {
         ...state,
         userID: action.payload,
+      };
+    case DELETE_USER_ID:
+      return {
+        ...state,
+        userID: null,
       };
     case LOAD_QUIZ:
       return {
@@ -31,6 +42,12 @@ export default function dataReducer(state = initialState, action) {
         ...state,
         questions: action.payload.questions,
         quizID: action.payload.quizID,
+        answered_questions_count: action.payload.answered_questions_count,
+      };
+    case STORE_CURRENT_QUIZ:
+      return {
+        ...state,
+        quizData: action.payload,
       };
   }
   return state;

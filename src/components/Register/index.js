@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
-import { Select, Dropdown } from "semantic-ui-react";
+import { Dropdown } from "semantic-ui-react";
 import axiosInstance from "../../api";
+import { useHistory } from "react-router-dom";
 
 function Register() {
+  let history = useHistory();
   const [fname, setFname] = useState(null);
   const [lname, setLname] = useState(null);
   const [mail, setMail] = useState(null);
@@ -74,7 +76,7 @@ function Register() {
       });
   }, []);
 
-  const register = () => {
+  const register = (props) => {
     axiosInstance({
       method: "post",
       url: `user`,
@@ -99,6 +101,7 @@ function Register() {
 
         if (response.data.code == "SUCCESS") {
           // Move to Login
+          history.replace("/");
         } else {
           // Try Later
         }
@@ -187,25 +190,26 @@ function Register() {
           />
         </div>
 
+        <p>Year</p>
         <div class="radioButton">
           <div class="ui radio checkbox">
             <input
               type="radio"
               value="first"
               name="year"
-              onChange={(e) => setYear(e.target.name)}
+              onChange={(e) => setYear(e.target.value)}
             />
-            <label>First yr</label>
+            <label>First</label>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div class="ui radio checkbox">
             <input
               type="radio"
-              name="second"
+              value="second"
               name="year"
-              onChange={(e) => setYear(e.target.name)}
+              onChange={(e) => setYear(e.target.value)}
             />
-            <label>Second yr</label>
+            <label>Second</label>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div class="ui radio checkbox">
@@ -213,9 +217,9 @@ function Register() {
               type="radio"
               value="third"
               name="year"
-              onChange={(e) => setYear(e.target.name)}
+              onChange={(e) => setYear(e.target.value)}
             />
-            <label>Third yr</label>
+            <label>Third</label>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div class="ui radio checkbox">
@@ -223,9 +227,9 @@ function Register() {
               type="radio"
               value="final"
               name="year"
-              onChange={(e) => setYear(e.target.name)}
+              onChange={(e) => setYear(e.target.value)}
             />
-            <label>Final yr</label>
+            <label>Final</label>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div class="ui radio checkbox">
@@ -233,7 +237,7 @@ function Register() {
               type="radio"
               value="me/phd"
               name="year"
-              onChange={(e) => setYear(e.target.name)}
+              onChange={(e) => setYear(e.target.value)}
             />
             <label>ME/PhD</label>
           </div>
@@ -244,13 +248,14 @@ function Register() {
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
           }}
         >
           <Dropdown
             placeholder="Department"
             options={deptOptions}
             fluid
+            compact
             search
             selection
             value={dept}
@@ -259,10 +264,11 @@ function Register() {
             }}
           />
 
-          <Select
+          <Dropdown
             placeholder="Section"
             value={section}
             fluid
+            compact
             search
             selection
             options={sectOptions}
@@ -274,7 +280,7 @@ function Register() {
 
         <br />
         <br />
-        <div disabled={false} onClick={register} className="btnSignUp">
+        <div onClick={isEnabled ? register : null} className="btnSignUp">
           Sign Up
         </div>
       </form>

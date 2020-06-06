@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, Fragment } from "react";
 import { connect } from "react-redux";
 import { loadQuiz, loadQuestions } from "../../store/actions/data.action";
 import "./styles.css";
+import { useHistory } from "react-router-dom";
 
 const Quiz = (props) => {
-  const [Quiz, setQuiz] = useState([]);
-
+  let history = useHistory();
   /**
    * [
     {
@@ -44,14 +44,36 @@ const Quiz = (props) => {
 
   return (
     <div id="quizContainer">
-      <h1>Select a Quiz to Attend</h1>
+      <h1>
+        {" "}
+        <img
+          src={require("../../assets/images/quiz.png")}
+          height={40}
+          width={40}
+          style={{ marginRight: "15px  " }}
+        />{" "}
+        Quiz
+      </h1>
       <div className="ui cards">
         {props.quiz.length > 0 ? (
           props.quiz.map((quizData) => {
             return (
               <div className="ui card" key={quizData.id}>
                 <div className="content">
-                  <div className="header">{quizData.name}</div>
+                  <div className="header">
+                    {quizData.image_url != null ? (
+                      <Fragment>
+                        <img
+                          src={
+                            "http://localhost:8000/static/" + quizData.image_url
+                          }
+                          alt="Couldn't load"
+                          className="ui larger image"
+                        />
+                      </Fragment>
+                    ) : null}
+                    {quizData.name}
+                  </div>
                   <div className="meta">{quizData.hardness}</div>
                   <div className="description">
                     <div className="quizDetail">{quizData.description}</div>
@@ -75,15 +97,15 @@ const Quiz = (props) => {
                     </div>
                   </div>
                 </div>
-                <div class="extra content">
+                <div className="extra content">
                   <button
                     className="ui medium primary button"
                     onClick={() => {
-                      props.loadQuestions(quizData.id);
-                      props.history.push("/questions");
+                      props.loadQuestions(quizData);
+                      history.push("/questions");
                     }}
                   >
-                    Start Quiz
+                    {quizData.resume ? "Resume Quiz" : "Start Quiz"}
                   </button>
                 </div>
               </div>
@@ -99,7 +121,6 @@ const Quiz = (props) => {
 
 const mapStateToProps = (state) => ({
   quiz: state.data.quiz,
-  userID: state.data.userID,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,14 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Fragment } from "react";
+import { useMediaQuery } from "react-responsive";
 import "./styles.css";
+import Particles from "react-particles-js";
+import { sessionService } from "redux-react-session";
+import { storeUser } from "../../store/actions/data.action";
+import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Welcome = (props) => {
+  let history = useHistory();
+  useEffect(() => {
+    sessionService
+      .loadUser()
+      .then((currentUser) => {
+        console.log(currentUser);
+        props.storeUser(currentUser);
+        if (currentUser) {
+          history.replace("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const isDesktopOrLaptop = useMediaQuery({
+    query: "(min-device-width: 768px)",
+  });
+
   return (
     <div id="homeContainer">
       <div id="clubHead">
-        <div>
-          Literary Association <br /> And Tamil Mandram
-        </div>
-        <p>presents</p>
+        {isDesktopOrLaptop ? (
+          <Fragment>
+            Literary Association And Tamil Mandram
+            <p>presents</p>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <div>
+              Literary Association <br /> And Tamil Mandram
+            </div>
+            <p>presents</p>
+          </Fragment>
+        )}
       </div>
       <div id="appName">
         <div>Quiz Up</div>
@@ -23,7 +56,7 @@ const Welcome = (props) => {
         <div
           className="btnOption ca"
           onClick={() => {
-            props.history.push("/register");
+            history.push("/register");
           }}
         >
           Create Account
@@ -32,7 +65,7 @@ const Welcome = (props) => {
           Have an account already?{" "}
           <a
             onClick={() => {
-              props.history.push("/login");
+              history.push("/login");
             }}
           >
             <b> Log in</b>
@@ -43,4 +76,10 @@ const Welcome = (props) => {
   );
 };
 
-export default Welcome;
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  storeUser: (data) => dispatch(storeUser(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Welcome);

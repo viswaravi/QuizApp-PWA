@@ -14,7 +14,8 @@
 
 .heading {
   display: flex;
-  justify-content: left;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .formElt {

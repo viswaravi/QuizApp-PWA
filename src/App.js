@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import logo from "./logo.svg";
 import { Provider } from "react-redux";
 import "./App.css";
 import Store from "./store/configureStore";
@@ -10,18 +9,23 @@ import Questions from "./components/question/index";
 import Login from "./components/Login/index";
 import Register from "./components/Register/index";
 import Welcome from "./components/welcome";
+import Protected from "./components/protected-hoc";
+import Home from "./components/home/index";
 
 const App = () => {
   return (
     <Provider store={Store}>
       <div id="App">
         <Switch>
-          <Route exact path="/quiz" component={Quiz} />
-          <Route path="/register" component={Register} />
-          <Route path="/login" component={Login} />
-          <Route path="/questions" component={Questions} />
-          <Route path="/" component={Welcome} />
+          <Route exact path="/welcome" component={Welcome} />
+          <Route exact path="/register" component={Register} />
+          <Route exact path="/login" component={Login} />
+          <Protected path="/" component={Home} />
         </Switch>
+        {/**
+          <Protected exact path="/quiz" component={Quiz} />
+          <Protected exact path="/questions" component={Questions} />
+         */}
       </div>
     </Provider>
   );
