@@ -8,6 +8,7 @@ import styles from "./styles.css";
 import { logOutUser } from "../../store/actions/data.action";
 import { connect } from "react-redux";
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import Score from "../score/index";
 
 const Home = (props) => {
   let history = useHistory();
@@ -36,13 +37,33 @@ const Home = (props) => {
         </div>
       </div>
       <div id="sideMenu" className={showMenu && "optionShow"}>
-        <div className="menuOption">
+        <div
+          className="menuOption"
+          onClick={() => {
+            history.replace("/");
+            setShowMenu(false);
+          }}
+        >
+          <img
+            className="menuIcon"
+            src={require("../../assets/images/home.png")}
+          />
+          <h2>Home</h2>{" "}
+        </div>
+        <div
+          className="menuOption"
+          onClick={() => {
+            setShowMenu(false);
+            history.replace("/leaderboard");
+          }}
+        >
           <img
             className="menuIcon"
             src={require("../../assets/images/leaderboard.png")}
           />
           <h2>Leaderboard</h2>{" "}
         </div>
+        {/**
         <div className="menuOption">
           <img
             className="menuIcon"
@@ -50,6 +71,7 @@ const Home = (props) => {
           />
           <h2>Feedback</h2>{" "}
         </div>
+        */}
         <div
           className="menuOption"
           onClick={() => {
@@ -67,9 +89,11 @@ const Home = (props) => {
       <Fragment>
         <Switch>
           <Route exact path="/" component={Quiz} />
-          <Route path="/questions" component={Questions} />
-          <Route path="/leaderboard" component={Leaderboard} />
-          <Route path="/feedback" component={Feedback} />
+          <Route exact path="/questions" component={Questions} />
+          <Route exact path="/questions/score" component={Score} />
+          <Route exact path="/leaderboard" component={Leaderboard} />
+          <Route exact path="/leaderboard/quiz" component={Leaderboard} />
+          <Route exact path="/feedback" component={Feedback} />
         </Switch>
       </Fragment>
     </div>

@@ -1,0 +1,54 @@
+.pageheading {
+  color: #ff9665;
+  font-size: 135%;
+  margin-top: 2%;
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homeIcon {
+  margin-left: 20%;
+}
+
+
+
+table {
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  justify-self: center;
+  align-self: center;
+  width: 90%;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #f9fafb;
+}
+
+th {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+td {
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+#tableContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.userActive{
+  background-color: #00838f;
+  color: white;
+}

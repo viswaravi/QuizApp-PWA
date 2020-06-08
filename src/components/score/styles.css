@@ -1,0 +1,14 @@
+#scoreContainer {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 30px;
+  color: #748A9D;
+}
+
+.ui.medium.primary.button {
+  background-color: #ff9665 !important;
+  border-radius: 50px !important;
+}

@@ -25,8 +25,7 @@ function Login(props) {
   }, [pass, roll]);
 
   const login = () => {
-    console.log(roll, pass);
-
+   
     axiosInstance({
       method: "post",
       url: `user/login`,
@@ -39,7 +38,7 @@ function Login(props) {
       },
     })
       .then((response) => {
-        console.log("Login SUCCESS :", response.data);
+     //   console.log("Login SUCCESS :", response.data);
 
         if (response.data.password == true) {
           // Store in Session
@@ -64,7 +63,7 @@ function Login(props) {
         }
       })
       .catch((error) => {
-        console.log("Log In FAIL :", error);
+       // console.log("Log In FAIL :", error);
       });
   };
 

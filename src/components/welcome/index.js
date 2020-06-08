@@ -13,13 +13,14 @@ const Welcome = (props) => {
     sessionService
       .loadUser()
       .then((currentUser) => {
-        console.log(currentUser);
         props.storeUser(currentUser);
         if (currentUser) {
           history.replace("/");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{
+       //console.log(err)
+      });
   }, []);
 
   const isDesktopOrLaptop = useMediaQuery({

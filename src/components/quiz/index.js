@@ -36,12 +36,6 @@ const Quiz = (props) => {
     props.loadQuiz();
   }, []);
 
-  useEffect(() => {
-    if (props.quiz.length > 0) {
-      console.log(props.quiz);
-    }
-  }, [props.quiz]);
-
   return (
     <div id="quizContainer">
       <h1>
@@ -100,9 +94,12 @@ const Quiz = (props) => {
                 <div className="extra content">
                   <button
                     className="ui medium primary button"
+                    disabled={quizData["attended"] ? true : false}
                     onClick={() => {
-                      props.loadQuestions(quizData);
-                      history.push("/questions");
+                      if (!quizData["attended"]) {
+                        props.loadQuestions(quizData);
+                        history.push("/questions");
+                      }
                     }}
                   >
                     {quizData.resume ? "Resume Quiz" : "Start Quiz"}

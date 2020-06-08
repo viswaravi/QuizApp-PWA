@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import "./styles.css";
 import { Dropdown } from "semantic-ui-react";
 import axiosInstance from "../../api";
@@ -19,6 +19,7 @@ function Register() {
 
   const [deptOptions, setdeptOptions] = useState([]);
   const [sectOptions, setSectOptions] = useState([]);
+  const [yearOptions, setYearOptions] = useState([]);
 
   useEffect(() => {
     if (fname && lname && mail && pass && roll && year && dept && section) {
@@ -27,13 +28,45 @@ function Register() {
   }, [fname, lname, mail, pass, roll, year, dept, section]);
 
   useEffect(() => {
+    loadYear();
+    loadDept();
+    loadSection();
+  }, []);
+
+  const loadYear = () => {
+    axiosInstance({
+      method: "get",
+      url: `metadata/year`,
+      timeout: 5000,
+    })
+      .then((response) => {
+     //   console.log("year :", response.data.year);
+
+        let options = [];
+
+        response.data.year.map((year) => {
+          options.push({
+            key: year.name,
+            value: year.name,
+            text: year.name,
+          });
+        });
+
+        setYearOptions(options);
+      })
+      .catch((error) => {
+       // console.log("Dept FETCH FAIL :", error);
+      });
+  };
+
+  const loadDept = () => {
     axiosInstance({
       method: "get",
       url: `metadata/department`,
       timeout: 5000,
     })
       .then((response) => {
-        console.log("Department :", response.data.department);
+       // console.log("Department :", response.data.department);
 
         let options = [];
 
@@ -48,16 +81,18 @@ function Register() {
         setdeptOptions(options);
       })
       .catch((error) => {
-        console.log("Dept FETCH FAIL :", error);
+       // console.log("Dept FETCH FAIL :", error);
       });
+  };
 
+  const loadSection = () => {
     axiosInstance({
       method: "get",
       url: `metadata/section`,
       timeout: 5000,
     })
       .then((response) => {
-        console.log("Section :", response.data.section);
+     //   console.log("Section :", response.data.section);
 
         let options = [];
 
@@ -72,9 +107,9 @@ function Register() {
         setSectOptions(options);
       })
       .catch((error) => {
-        console.log("Dept FETCH FAIL :", error);
+      //  console.log("Dept FETCH FAIL :", error);
       });
-  }, []);
+  };
 
   const register = (props) => {
     axiosInstance({
@@ -97,7 +132,7 @@ function Register() {
       },
     })
       .then((response) => {
-        console.log("SINUP SUCCESS :", response.data);
+      //  console.log("SINUP SUCCESS :", response.data);
 
         if (response.data.code == "SUCCESS") {
           // Move to Login
@@ -107,7 +142,7 @@ function Register() {
         }
       })
       .catch((error) => {
-        console.log("SIGN UP FAIL :", error);
+      //  console.log("SIGN UP FAIL :", error);
       });
   };
 
@@ -122,7 +157,7 @@ function Register() {
         },
       })
         .then((response) => {
-          console.log("Unique User Check:", response.data);
+       //   console.log("Unique User Check:", response.data);
 
           if (response.data.unique == false) {
             setUniqueUser(false);
@@ -132,7 +167,7 @@ function Register() {
           }
         })
         .catch((error) => {
-          console.log("Unique user Check FAIL :", error);
+        //  console.log("Unique user Check FAIL :", error);
         });
     }
   };
@@ -192,55 +227,23 @@ function Register() {
 
         <p>Year</p>
         <div class="radioButton">
-          <div class="ui radio checkbox">
-            <input
-              type="radio"
-              value="first"
-              name="year"
-              onChange={(e) => setYear(e.target.value)}
-            />
-            <label>First</label>
-          </div>
-          &nbsp;&nbsp;&nbsp;
-          <div class="ui radio checkbox">
-            <input
-              type="radio"
-              value="second"
-              name="year"
-              onChange={(e) => setYear(e.target.value)}
-            />
-            <label>Second</label>
-          </div>
-          &nbsp;&nbsp;&nbsp;
-          <div class="ui radio checkbox">
-            <input
-              type="radio"
-              value="third"
-              name="year"
-              onChange={(e) => setYear(e.target.value)}
-            />
-            <label>Third</label>
-          </div>
-          &nbsp;&nbsp;&nbsp;
-          <div class="ui radio checkbox">
-            <input
-              type="radio"
-              value="final"
-              name="year"
-              onChange={(e) => setYear(e.target.value)}
-            />
-            <label>Final</label>
-          </div>
-          &nbsp;&nbsp;&nbsp;
-          <div class="ui radio checkbox">
-            <input
-              type="radio"
-              value="me/phd"
-              name="year"
-              onChange={(e) => setYear(e.target.value)}
-            />
-            <label>ME/PhD</label>
-          </div>
+          {yearOptions.map((yearOption) => {
+            return (
+              <Fragment>
+                <div class="ui radio checkbox">
+                  <input
+                    type="radio"
+                    value={yearOption.value}
+                    name="year"
+                    onChange={(e) => setYear(yearOption.value)}
+                  />
+                  <label>{yearOption.text}</label>
+                </div>
+                &nbsp;&nbsp;&nbsp;
+              </Fragment>
+            );
+          })}
+        
         </div>
         <br />
 
@@ -280,7 +283,11 @@ function Register() {
 
         <br />
         <br />
-        <div onClick={isEnabled ? register : null} className="btnSignUp">
+        <div
+          onClick={isEnabled ? register : null}
+          className="btnSignUp"
+          style={isEnabled ? null : { opacity: 0.7 }}
+        >
           Sign Up
         </div>
       </form>

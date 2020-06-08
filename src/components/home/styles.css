@@ -38,6 +38,7 @@
   transition-property: transform , opacity;
   transition-duration: 0.5s;
   transition-timing-function: ease-in;
+  user-select: none;
 }
 
 

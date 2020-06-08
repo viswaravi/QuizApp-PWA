@@ -11,6 +11,9 @@ export const LOAD_QUESTIONS = "LOAD_QUESTIONS";
 export const STORE_USER_ID = "STORE_USER_ID";
 export const DELETE_USER_ID = "DELETE_USER_ID";
 
+export const LOAD_QUIZ_LEADERBOARD = "LOAD_QUIZ_LEADERBOARD";
+export const LOAD_LEADERBOARD = "LOAD_LEADERBOARD";
+
 //Action Where the Business Logic is Present
 
 export const storeUser = (uid) => (dispatch) => {
@@ -18,8 +21,6 @@ export const storeUser = (uid) => (dispatch) => {
 };
 
 export const submitQuiz = (data) => (dispatch) => {
-  console.log("SQ :", data.uid, data.qid);
-
   axiosInstance({
     method: "post",
     url: `answer/submit`,
@@ -29,10 +30,13 @@ export const submitQuiz = (data) => (dispatch) => {
     },
   })
     .then((response) => {
-      console.log("QUIZ SUBMIT SUCCESS :", response.data);
+      //      console.log("QUIZ SUBMIT SUCCESS :", response.data.details);
+
+      dispatch({ type: SUBMIT_QUIZ, payload: response.data.details.score });
     })
     .catch((error) => {
-      console.log("QUIZ SUBMIT FAIL :", error);
+      //    console.log("QUIZ SUBMIT FAIL :", error);
+      dispatch({ type: SUBMIT_QUIZ, payload: null });
     });
 };
 
@@ -49,12 +53,12 @@ export const loadQuiz = (uid) => (dispatch, getState) => {
     timeout: 5000,
   })
     .then((response) => {
-      console.log("QUIZ FETCH SUCCESS :", response.data.quiz);
+      //  console.log("QUIZ FETCH SUCCESS :", response.data.quiz);
 
       dispatch({ type: LOAD_QUIZ, payload: response.data.quiz });
     })
     .catch((error) => {
-      console.log("QUIZ FETCH FAIL :", error);
+      //  console.log("QUIZ FETCH FAIL :", error);
 
       dispatch({ type: LOAD_QUIZ, payload: [] });
     });
@@ -71,7 +75,7 @@ export const loadQuestions = (quizData) => (dispatch, getState) => {
     timeout: 5000,
   })
     .then((response) => {
-      console.log("QUESTIONS FETCH SUCCESS :", response.data.question);
+      //   console.log("QUESTIONS FETCH SUCCESS :", response.data.question);
 
       dispatch({
         type: LOAD_QUESTIONS,
@@ -83,8 +87,54 @@ export const loadQuestions = (quizData) => (dispatch, getState) => {
       });
     })
     .catch((error) => {
-      console.log("QUESTION FETCH FAIL :", error);
+      //  console.log("QUESTION FETCH FAIL :", error);
 
       dispatch({ type: LOAD_QUESTIONS, payload: [] });
+    });
+};
+
+export const loadQuizLeaderboard = (data) => (dispatch, getState) => {
+  // console.log("Question ID :", quizData.id);
+
+  axiosInstance({
+    method: "get",
+    url: `leaderboard/` + data.uid + "/" + data.qid,
+    timeout: 5000,
+  })
+    .then((response) => {
+      //   console.log("Q_LEADERBOARD FETCH SUCCESS :", response.data);
+
+      dispatch({
+        type: LOAD_QUIZ_LEADERBOARD,
+        payload: response.data,
+      });
+    })
+    .catch((error) => {
+      //  console.log("Q_LEADERBOARD FETCH FAIL :", error);
+
+      dispatch({ type: LOAD_QUIZ_LEADERBOARD, payload: {} });
+    });
+};
+
+export const loadLeaderboard = (uid) => (dispatch, getState) => {
+  // console.log("Question ID :", quizData.id);
+
+  axiosInstance({
+    method: "get",
+    url: `leaderboard/` + uid,
+    timeout: 5000,
+  })
+    .then((response) => {
+      //  console.log("LEADERBOARD FETCH SUCCESS :", response.data);
+
+      dispatch({
+        type: LOAD_LEADERBOARD,
+        payload: response.data,
+      });
+    })
+    .catch((error) => {
+      // console.log("LEADERBOARD FETCH FAIL :", error);
+
+      dispatch({ type: LOAD_QUIZ_LEADERBOARD, payload: {} });
     });
 };

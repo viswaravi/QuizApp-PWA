@@ -1,0 +1,21 @@
+.ui.table {
+  width: 90% !important;
+  margin-left: 5%;
+  overflow-x: scroll !important;
+}
+
+.ui.table thead th {
+  color: #ff9665 !important;
+}
+.ui.table:not(.unstackable) th:first-child {
+  font-weight: 700 !important;
+}
+.ui.table:not(.unstackable) td:first-child {
+  font-weight: 500 !important;
+}
+.ui.table td.active,
+.ui.table tr.active {
+  background: #ff9665 !important;
+  color: black !important;
+  opacity: 0.5;
+}

@@ -11,6 +11,9 @@
 
 .question {
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* The container for each Radio Button*/
@@ -85,6 +88,9 @@
   border-radius: 30px;
   padding: 8px;
   color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 #questionHeaderInfo > div {
@@ -94,6 +100,27 @@
 #questionHeaderInfo h1,
 h3 {
   display: inline;
+}
+
+.safeTime {
+  background-color: #4caf50;
+}
+
+.dangerTime {
+  background-color: tomato;
+}
+
+.qImage {
+  width: 90%;
+  height: auto;
+  max-height: 20%;
+  margin-bottom: 10px;
+}
+
+.aImage {
+  width: 100%;
+  height: auto;
+  max-height: 5%;
 }
 
 /* For Large Screens */
@@ -107,7 +134,7 @@ h3 {
     width: 100%;
   }
   .propContainer {
-    width: 100%;
+    width: 40%;
     margin-bottom: 25px;
   }
   .question {
@@ -116,12 +143,17 @@ h3 {
   #questionHeaderInfo {
     padding-left: 40px;
   }
-}
-
-.safeTime {
-  background-color: #4caf50;
-}
-
-.dangerTime {
-  background-color: tomato;
+  .qImage {
+    width: 40%;
+    height: auto;
+    max-height: 20%;
+    align-self: center;
+    align-content: center;
+    margin-bottom: 10px;
+  }
+  .aImage {
+    width: 100%;
+    height: auto;
+    max-height: 2%;
+  }
 }

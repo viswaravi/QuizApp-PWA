@@ -5,7 +5,10 @@ import "./styles.css";
 import "react-animated-slider/build/horizontal.css";
 import axiosInstance from "../../api";
 import { useHistory } from "react-router-dom";
-import { submitQuiz } from "../../store/actions/data.action";
+import {
+  submitQuiz,
+  loadQuizLeaderboard,
+} from "../../store/actions/data.action";
 
 const Questions = (props) => {
   let history = useHistory();
@@ -13,6 +16,10 @@ const Questions = (props) => {
   const [answerDetails, setAnswerDetails] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [questionsToAnswer, setQuestionsToAnswer] = useState([]);
+  const [dispQuestions, setDispQuestions] = useState([]);
+
+  const img_base_url =
+    "http://mepcoquizapp.southeastasia.cloudapp.azure.com:8000/static/";
 
   useEffect(() => {
     return () => {
@@ -22,25 +29,71 @@ const Questions = (props) => {
 
   useEffect(() => {
     if (props.questions.length > 0) {
-      console.log(props.questions);
+      //  console.log(props.questions);
 
       // Set Questions to Answer
-      let ids = [];
-      props.questions.map((question) => {
-        ids.push(question.id);
-      });
-      setQuestionsToAnswer(ids);
+      getQuestionsLimited();
 
       startTimer();
       // Watch for BackAction and Clear Timer
       history.listen((location) => {
         if (location.pathname == "/home") {
-          console.log("Popped");
           clearTimer();
         }
       });
+    } else {
+      // setTimeout(goBack, 2000);
     }
   }, [props.questions]);
+
+  const goBack = () => {
+    history.goBack();
+  };
+
+  const getQuestionsLimited = () => {
+    let qIndexes = [];
+    let num = 0;
+    let valid = false;
+
+    for (
+      let i = 0;
+      i <
+      props.quizData["no_of_answers_to_display"] -
+        props.answered_questions_count;
+      i++
+    ) {
+      valid = false;
+
+      while (!valid) {
+        num = getRandomIndex();
+        if (!qIndexes.includes(num)) {
+          qIndexes.push(num);
+          valid = true;
+        }
+      }
+    }
+
+    let qs = [];
+    qIndexes.map((qIx) => {
+      qs.push(props.questions[qIx]);
+    });
+
+    // Set the Limited Question to Display
+    setDispQuestions(qs);
+
+    // Set IDS of that Questions
+    let ids = [];
+    qs.map((question) => {
+      ids.push(question.id);
+    });
+    setQuestionsToAnswer(ids);
+  };
+
+  const getRandomIndex = () => {
+    // Gen Random Number between 0 and N
+    // N - Number of questions
+    return Math.round(Math.random() * (props.questions.length - 1));
+  };
 
   const startTimer = () => {
     const quizTotalTime = props.quizData.time * 60;
@@ -51,13 +104,13 @@ const Questions = (props) => {
 
     const time_to_answer = no_questions_to_answer * time_per_question;
 
-    /*console.log(
+    console.log(
       quizTotalTime,
       time_per_question,
       no_questions_to_answer,
       time_to_answer
     );
-    */
+
     // Start the Timer
     setTimeLeft(time_to_answer);
   };
@@ -77,7 +130,7 @@ const Questions = (props) => {
   };
 
   const nextQuestion = () => {
-    if (questionIndex < props.questions.length - 1) {
+    if (questionIndex < dispQuestions.length - 1) {
       setAnswerDetails([]);
       setquestionIndex(questionIndex + 1);
     }
@@ -140,7 +193,6 @@ const Questions = (props) => {
 
   const submitQuestion = () => {
     if (answerDetails.length > 0) {
-      console.log(answerDetails);
       axiosInstance({
         method: "post",
         url: `answer`,
@@ -150,14 +202,11 @@ const Questions = (props) => {
         },
       })
         .then((response) => {
-          console.log("Question Submitted:", response.data);
-
-          const qid = props.questions[questionIndex].id;
+          const qid = dispQuestions[questionIndex].id;
 
           // Remove answered Quetions
           let qids = questionsToAnswer;
 
-          console.log("QIDS :", qids);
           if (qids.includes(qid)) {
             qids.splice(qids.indexOf(qid), 1);
           }
@@ -165,19 +214,29 @@ const Questions = (props) => {
           if (qids.length == 0) {
             // Submit Quiz Finish
 
-            console.log("Current :", props);
-
             props.submitQuiz({ uid: props.userID, qid: props.quizID });
 
-            history.replace("/feedback");
+            history.replace("/questions/score");
           } else if (qids.length > 0) {
             setQuestionsToAnswer(qids);
             nextQuestion();
           }
         })
         .catch((error) => {
-          console.log("Question Submit Fail :", error);
+         // console.log("Question Submit Fail :", error);
         });
+    }
+  };
+
+  const isAnswerImage = (answer) => {
+    if (Object.keys(answer).includes("answer_image_name")) {
+      if (answer["answer_image_name"] != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
     }
   };
 
@@ -188,7 +247,7 @@ const Questions = (props) => {
           {" "}
           <h3 style={{ marginRight: 20 }}>Questions</h3>
           <h1>{questionIndex + 1}</h1>
-          <h3>/{props.questions.length}</h3>
+          <h3>/{dispQuestions.length}</h3>
         </div>
         <div>
           <h4 id="timer" className={timeLeft < 300 ? "dangerTime" : "safeTime"}>
@@ -197,86 +256,101 @@ const Questions = (props) => {
           </h4>
         </div>
       </div>
-      {props.questions.length > 0 ? (
+      {dispQuestions.length > 0 ? (
         <div key={questionIndex}>
           <div className="question">
-            <h1> {props.questions[questionIndex]["question_text"]}</h1>
+            <h3> {dispQuestions[questionIndex]["question_text"]}</h3>
             <br />
+            {dispQuestions[questionIndex]["question_image_name"] != null ? (
+              <img
+                className="qImage"
+                src={
+                  img_base_url +
+                  dispQuestions[questionIndex]["question_image_name"]
+                }
+              />
+            ) : null}
           </div>
           <div className="answerContainer">
-            {props.questions[questionIndex].question_type == "SINGLECHOICE" ? (
+            {dispQuestions[questionIndex].question_type == "SINGLECHOICE" ? (
               <Fragment>
-                {props.questions[questionIndex].answers.map(
-                  (answer, aindex) => {
-                    return (
+                {dispQuestions[questionIndex].answers.map((answer, aindex) => {
+                  return (
+                    <label
+                      className="propContainer radioContainer"
+                      style={
+                        isSelected(answer["id"])
+                          ? { backgroundColor: "#FF9665", color: "white" }
+                          : null
+                      }
+                      key={answer["answer_text"]}
+                    >
+                      {isAnswerImage(answer) ? (
+                        <img
+                          className="aImage"
+                          src={img_base_url + answer["answer_image_name"]}
+                        />
+                      ) : null}
+                      {answer["answer_text"]}
+                      <input
+                        type="radio"
+                        value={answer["answer_text"]}
+                        name={dispQuestions[questionIndex]["question_text"]}
+                        onChange={() => {
+                          optionSelectHandler(
+                            dispQuestions[questionIndex].id,
+                            answer["id"],
+                            "SINGLECHOICE"
+                          );
+                        }}
+                      />
+                      <span className="customCheck"></span>
+                    </label>
+                  );
+                })}
+              </Fragment>
+            ) : (
+              // Check Box
+              <Fragment>
+                {dispQuestions[questionIndex].answers.map((answer, aindex) => {
+                  return (
+                    <Fragment>
                       <label
-                        className="propContainer radioContainer"
+                        className="propContainer checkContainer"
                         style={
                           isSelected(answer["id"])
-                            ? { backgroundColor: "#FF9665", color: "white" }
+                            ? {
+                                backgroundColor: "#FF9665",
+                                color: "white",
+                              }
                             : null
                         }
                         key={answer["answer_text"]}
                       >
+                        {isAnswerImage(answer) ? (
+                          <img
+                            className="aImage"
+                            src={img_base_url + answer["answer_image_name"]}
+                          />
+                        ) : null}
                         {answer["answer_text"]}
                         <input
-                          type="radio"
+                          type="checkbox"
                           value={answer["answer_text"]}
-                          name={props.questions[questionIndex]["question_text"]}
+                          name={dispQuestions[questionIndex]["question_text"]}
                           onChange={() => {
                             optionSelectHandler(
-                              props.questions[questionIndex].id,
+                              dispQuestions[questionIndex].id,
                               answer["id"],
-                              "SINGLECHOICE"
+                              "MULTIPLECHOICE"
                             );
                           }}
                         />
                         <span className="customCheck"></span>
                       </label>
-                    );
-                  }
-                )}
-              </Fragment>
-            ) : (
-              // Check Box
-              <Fragment>
-                {props.questions[questionIndex].answers.map(
-                  (answer, aindex) => {
-                    return (
-                      <div>
-                        <label
-                          className="propContainer checkContainer"
-                          style={
-                            isSelected(answer["id"])
-                              ? {
-                                  backgroundColor: "#FF9665",
-                                  color: "white",
-                                }
-                              : null
-                          }
-                          key={answer["answer_text"]}
-                        >
-                          {answer["answer_text"]}
-                          <input
-                            type="checkbox"
-                            value={answer["answer_text"]}
-                            name={
-                              props.questions[questionIndex]["question_text"]
-                            }
-                            onChange={() => {
-                              optionSelectHandler(
-                                props.questions[questionIndex].id,
-                                answer["id"],
-                                "MULTIPLECHOICE"
-                              );
-                            }}
-                          />
-                          <span className="customCheck"></span>
-                        </label>
-                      </div>
-                    );
-                  }
-                )}
+                    </Fragment>
+                  );
+                })}
               </Fragment>
             )}
           </div>
@@ -304,12 +378,9 @@ const Questions = (props) => {
           </div>
         </div>
       ) : (
-        <div class="ui active transition visible inverted dimmer">
-          <div class="content">
-            <div class="ui inverted text loader">
-              {" "}
-              No Questions to show Go back
-            </div>
+        <div className="ui active transition visible inverted dimmer">
+          <div className="content">
+            <div className="ui inverted text loader"> Loading</div>
           </div>
         </div>
       )}
@@ -327,6 +398,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   submitQuiz: (data) => dispatch(submitQuiz(data)),
+  loadQuizLeaderboard: (data) => dispatch(loadQuizLeaderboard(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Questions);
