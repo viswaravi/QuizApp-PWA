@@ -6,6 +6,8 @@
   align-items: center;
   padding: 30px;
   color: #748A9D;
+  font-size: large;
+  height: 100vh;
 }
 
 .ui.medium.primary.button {

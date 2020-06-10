@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { loadQuiz, loadQuestions } from "../../store/actions/data.action";
 import "./styles.css";
 import { useHistory } from "react-router-dom";
+import axiosInstance from "../../api";
 
 const Quiz = (props) => {
   let history = useHistory();
@@ -59,11 +60,15 @@ const Quiz = (props) => {
                       <Fragment>
                         <img
                           src={
-                            "http://localhost:8000/static/" + quizData.image_url
+                            axiosInstance.defaults.baseURL +
+                            "static/" +
+                            quizData.image_url
                           }
                           alt="Couldn't load"
-                          className="ui larger image"
+                          className="ui large image posterImage"
                         />
+                        <br />
+                        <br />
                       </Fragment>
                     ) : null}
                     {quizData.name}
@@ -76,7 +81,7 @@ const Quiz = (props) => {
                         className="quizDetail"
                         style={{ fontWeight: "bold" }}
                       >
-                        {quizData.no_of_questions}
+                        {quizData.no_of_answers_to_display}
                       </span>{" "}
                       Questions
                     </div>

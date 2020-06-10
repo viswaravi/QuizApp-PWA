@@ -23,7 +23,9 @@ const Home = (props) => {
   return (
     <div id="home">
       <div id="navBar">
-        <div id="logo"></div>
+        <div id="logo">
+          <img src={require("../../assets/images/logo.jpeg")}  width="40" height="40"/>
+        </div>
         <div>
           <label
             onClick={(e) => {
@@ -36,6 +38,7 @@ const Home = (props) => {
           </label>
         </div>
       </div>
+
       <div id="sideMenu" className={showMenu && "optionShow"}>
         <div
           className="menuOption"

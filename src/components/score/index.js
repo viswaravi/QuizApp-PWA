@@ -8,10 +8,18 @@ const Score = (props) => {
 
   return (
     <div id="scoreContainer">
-      <img src={require("../../assets/images/score.png")} width="300" height="316" />
+      <img
+        src={require("../../assets/images/score.png")}
+        width="300"
+        height="316"
+      />
       <div>Answers's Submitted</div>
       <div>
         Your Score : {props.score}/{props.quizData["total_mark"]}
+        {/** */}
+      </div>
+      <div>
+        Your have {props.pass?'Passed':'Failed'} the Quiz
         {/** */}
       </div>
       <div></div>
@@ -30,6 +38,7 @@ const Score = (props) => {
 
 const mapStateToProps = (state) => ({
   score: state.data.score,
+  pass: state.data.pass,
   quizData: state.data.quizData,
 });
 

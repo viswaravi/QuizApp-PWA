@@ -4,7 +4,7 @@ import Slider from "react-animated-slider";
 import "./styles.css";
 import "react-animated-slider/build/horizontal.css";
 import axiosInstance from "../../api";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   submitQuiz,
   loadQuizLeaderboard,
@@ -12,23 +12,18 @@ import {
 
 const Questions = (props) => {
   let history = useHistory();
+  let location = useLocation();
   const [questionIndex, setquestionIndex] = useState(0);
   const [answerDetails, setAnswerDetails] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [questionsToAnswer, setQuestionsToAnswer] = useState([]);
   const [dispQuestions, setDispQuestions] = useState([]);
+  const [submittedAnswerDetails, setSubmittedAnswerDetails] = useState([]);
 
-  const img_base_url =
-    "http://mepcoquizapp.southeastasia.cloudapp.azure.com:8000/static/";
-
-  useEffect(() => {
-    return () => {
-      clearTimer();
-    };
-  }, []);
+  const img_base_url = axiosInstance.defaults.baseURL + "static/";
 
   useEffect(() => {
-    if (props.questions.length > 0) {
+    if (props.questions.length > 0 && props.quizData.id == props.quizID) {
       //  console.log(props.questions);
 
       // Set Questions to Answer
@@ -36,13 +31,15 @@ const Questions = (props) => {
 
       startTimer();
       // Watch for BackAction and Clear Timer
+      /*
       history.listen((location) => {
         if (location.pathname == "/home") {
           clearTimer();
         }
       });
+      */
     } else {
-      // setTimeout(goBack, 2000);
+      //   setTimeout(goBack, 2000);
     }
   }, [props.questions]);
 
@@ -102,14 +99,15 @@ const Questions = (props) => {
     const no_questions_to_answer =
       props.quizData.no_of_answers_to_display - props.answered_questions_count;
 
-    const time_to_answer = no_questions_to_answer * time_per_question;
+    const time_to_answer = no_questions_to_answer * time_per_question - 60;
 
-    console.log(
+    /*  console.log(
       quizTotalTime,
       time_per_question,
       no_questions_to_answer,
       time_to_answer
     );
+    */
 
     // Start the Timer
     setTimeLeft(time_to_answer);
@@ -125,6 +123,7 @@ const Questions = (props) => {
   }, [timeLeft]);
 
   const clearTimer = () => {
+    console.log("Timer Clear");
     // Stop Timer
     setTimeLeft(0);
   };
@@ -206,26 +205,46 @@ const Questions = (props) => {
 
           // Remove answered Quetions
           let qids = questionsToAnswer;
-
           if (qids.includes(qid)) {
             qids.splice(qids.indexOf(qid), 1);
           }
 
           if (qids.length == 0) {
             // Submit Quiz Finish
-
             props.submitQuiz({ uid: props.userID, qid: props.quizID });
 
             history.replace("/questions/score");
           } else if (qids.length > 0) {
             setQuestionsToAnswer(qids);
+
+            setSubmittedAnswerDetails([
+              ...submittedAnswerDetails,
+              answerDetails,
+            ]);
             nextQuestion();
           }
         })
         .catch((error) => {
-         // console.log("Question Submit Fail :", error);
+          // console.log("Question Submit Fail :", error);
         });
     }
+  };
+
+  const isAnswerSubmitted = (aid) => {
+    let submitted = false;
+    submittedAnswerDetails.map((aDet) => {
+      aDet.map((ans) => {
+        if (ans.answer_id == aid) {
+          submitted = true;
+        }
+      });
+    });
+
+    if (submitted) {
+      console.log("SUB :", aid);
+    }
+
+    return submitted;
   };
 
   const isAnswerImage = (answer) => {
@@ -246,8 +265,8 @@ const Questions = (props) => {
         <div>
           {" "}
           <h3 style={{ marginRight: 20 }}>Questions</h3>
-          <h1>{questionIndex + 1}</h1>
-          <h3>/{dispQuestions.length}</h3>
+          <h1>{questionIndex + 1 + props.answered_questions_count}</h1>
+          <h3>/{dispQuestions.length + props.answered_questions_count}</h3>
         </div>
         <div>
           <h4 id="timer" className={timeLeft < 300 ? "dangerTime" : "safeTime"}>
@@ -281,6 +300,8 @@ const Questions = (props) => {
                       style={
                         isSelected(answer["id"])
                           ? { backgroundColor: "#FF9665", color: "white" }
+                          : isAnswerSubmitted(answer["id"])
+                          ? { borderColor: "#0277bd", borderWidth: 3 }
                           : null
                       }
                       key={answer["answer_text"]}

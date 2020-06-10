@@ -31,8 +31,7 @@ export const submitQuiz = (data) => (dispatch) => {
   })
     .then((response) => {
       //      console.log("QUIZ SUBMIT SUCCESS :", response.data.details);
-
-      dispatch({ type: SUBMIT_QUIZ, payload: response.data.details.score });
+      dispatch({ type: SUBMIT_QUIZ, payload: response.data.details });
     })
     .catch((error) => {
       //    console.log("QUIZ SUBMIT FAIL :", error);

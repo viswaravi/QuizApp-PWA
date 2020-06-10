@@ -25,6 +25,7 @@ const initialState = {
   // LeaderBoard
   leaderBoard: {},
   score: 0,
+  pass: false,
   /**
    * {
     "leaderboard": [
@@ -105,7 +106,8 @@ export default function dataReducer(state = initialState, action) {
     case SUBMIT_QUIZ:
       return {
         ...state,
-        score: action.payload,
+        score: action.payload.score,
+        pass: action.payload.is_pass,
       };
   }
   return state;

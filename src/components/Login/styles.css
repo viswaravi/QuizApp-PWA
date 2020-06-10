@@ -72,3 +72,7 @@
     width: 25%;
   }
 }
+
+input:focus{
+  border: none;
+}

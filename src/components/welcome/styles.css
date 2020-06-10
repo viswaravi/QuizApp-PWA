@@ -77,3 +77,40 @@
   cursor: pointer;
   font-size: larger;
 }
+
+.modalBtn {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+  border: 1px solid silver;
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.modalBtn img {
+  margin-right: 10px;
+}
+
+.modalBtn h4 {
+  margin: 0px;
+}
+
+#modalAction {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: space-evenly !important;
+}
+
+#modalAction :hover{
+  background-color: #eeeeee;
+}
+
+@media only screen and (min-width: 768px) {
+  #modalAction {
+    flex-direction: column;
+  }
+}
